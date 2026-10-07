@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Garaje de Yeya</title>
+<style>
+  :root {
+    --bg-dark: #0f0f0f;
+    --card-bg: #1a1a1a;
+    --card-border: #2a2a2a;
+    --text-main: #ffffff;
+    --text-muted: #a0a0a0;
+    --accent-orange: #ff5e2b;
+    --accent-green: #25d366;
+    --badge-bg: #e65100;
+    --nav-height: 65px;
+  }
+  
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+  }
+  
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    padding-bottom: calc(var(--nav-height) + 20px);
+  }
+
+  /* Header */
+  .header {
+    text-align: left;
+    padding: 20px 15px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .header-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #333;
+    background-image: url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=100&q=80');
+    background-size: cover;
+  }
+  .header-info h1 {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .header-info p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+
+  /* Category Sub-Nav */
+  .categories {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .cat-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  .cat-btn.active { 
+    color: var(--text-main); 
+    border-bottom: 2px solid var(--accent-orange); 
+    padding-bottom: 4px;
+  }
+
+  /* View Container Logic */
+  .view-section { display: none; padding: 15px; }
+  .view-section.active { display: block; }
+
+  /* Info Cards (Inicio View) */
+  .info-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  .info-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--accent-orange);
+  }
+  .info-text h4 {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+  .info-text p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* Product Cards */
+  .menu-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+  }
+  .card-img-wrapper {
+    position: relative;
+    height: 160px;
+  }
+  .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+  .tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--badge-bg);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  .card-body { padding: 15px; }
+  .card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .card-header-row h3 { font-size: 1.1rem; }
+  .price { color: var(--accent-orange); font-weight: bold; font-size: 1rem; }
+  .desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    line-height: 1.4;
+  }
+  .card-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .size { font-size: 0.8rem; color: var(--text-muted); }
+  .btn-pedir {
+    background-color: var(--accent-green);
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  /* Bottom Sticky Nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--nav-height);
+    background-color: #0c0c0c;
+    border-top: 1.5px solid var(--accent-orange);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #666;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    width: 25%;
+    cursor: pointer;
+  }
+  .nav-item.active { color: var(--accent-orange); }
+  .nav-item svg {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 4px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo"></div>
+  <div class="header-info">
+    <h1>El Garaje de Yeya</h1>
+    <p>PIZZERÍA</p>
+  </div>
+</div>
+
+<!-- VIEW: INICIO (HOME) -->
+<div id="view-inicio" class="view-section">
+  <!-- Featured Banner Placeholder -->
+  <div class="card" style="margin-bottom: 15px;">
+    <div class="card-img-wrapper" style="height: 140px;">
+      <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80" alt="Promoción Especial">
+    </div>
+    <div class="card-body" style="text-align: center;">
+      <h3 style="color: var(--accent-orange); margin-bottom: 4px;">¡Bienvenidos al Garaje!</h3>
+      <p class="desc" style="margin-bottom: 0;">Pizzas hechas al horno en nuestro garaje. Pide directamente por WhatsApp.</p>
+    </div>
+  </div>
+
+  <!-- Horario Card -->
+  <div class="info-card">
+    <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+    <div class="info-text">
+      <h4>Horario</h4>
+      <p>Mar–Dom · 4:00 PM – 11:00 PM</p>
+    </div>
+  </div>
+
+  <!-- Ubicación Card -->
+  <div class="info-card">
+    <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+    </svg>
+    <div class="info-text">
+      <h4>Ubicación</h4>
+      <p>PH28+M7M, Tinaco 2206, Cojedes, Venezuela</p>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW: PIZZAS -->
+<div id="view-pizzas" class="view-section active">
+  <div class="categories">
+    <button class="cat-btn active">Pizzas</button>
+    <button class="cat-btn" onclick="triggerNav('bebidas')">Bebidas</button>
+    <button class="cat-btn" onclick="triggerNav('combos')">Combos</button>
+  </div>
+  <div class="menu-container" id="pizzas-container"></div>
+</div>
+
+<!-- VIEW: BEBIDAS -->
+<div id="view-bebidas" class="view-section">
+  <div class="categories">
+    <button class="cat-btn" onclick="triggerNav('pizzas')">Pizzas</button>
+    <button class="cat-btn active">Bebidas</button>
+    <button class="cat-btn" onclick="triggerNav('combos')">Combos</button>
+  </div>
+  <div class="menu-container" id="bebidas-container"></div>
+</div>
+
+<!-- VIEW: COMBOS -->
+<div id="view-combos" class="view-section">
+  <div class="categories">
+    <button class="cat-btn" onclick="triggerNav('pizzas')">Pizzas</button>
+    <button class="cat-btn" onclick="triggerNav('bebidas')">Bebidas</button>
+    <button class="cat-btn active">Combos</button>
+  </div>
+  <div class="menu-container" id="combos-container"></div>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<div class="bottom-nav">
+  <div class="nav-item" data-target="inicio" onclick="switchView('inicio', this)">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Inicio
+  </div>
+  <div class="nav-item active" data-target="pizzas" onclick="switchView('pizzas', this)">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"></path><path d="M12 2v20"></path><circle cx="9" cy="16" r="1"></circle><circle cx="15" cy="18" r="1"></circle><circle cx="12" cy="10" r="1"></circle></svg>
+    Pizzas
+  </div>
+  <div class="nav-item" data-target="bebidas" onclick="switchView('bebidas', this)">
+    <svg viewBox="0 0 24 24"><path d="M6 8h12l-1.5 14H7.5L6 8z"></path><path d="M8 3h8"></path><path d="M12 3v5"></path></svg>
+    Bebidas
+  </div>
+  <div class="nav-item" data-target="combos" onclick="switchView('combos', this)">
+    <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+    Combos
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script>
+// --- Menu Data Databases ---
+const pizzasData = [
+  {
+    name: "Cuatro Quesos",
+    price: 8.00,
+    size: "Ø 35cm",
+    tag: null,
+    desc: "Mozzarella, parmesano, gorgonzola y provolone.",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80"
+  },
+  {
+    name: "Pepperoni",
+    price: 7.50,
+    size: "Ø 35cm",
+    tag: "TOP",
+    desc: "Salsa de tomate, mozzarella y pepperoni extra.",
+    image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600&q=80"
+  }
+];
+
+const bebidasData = [
+  {
+    name: "Refresco 1.5L (Placeholder)",
+    price: 2.50,
+    size: "1.5 Litros",
+    tag: "FRÍO",
+    desc: "Coca-Cola, Pepsi o Chinotto helado para acompañar tu pizza.",
+    image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600&q=80"
+  },
+  {
+    name: "Jugo Natural (Placeholder)",
+    price: 1.50,
+    size: "500ml",
+    tag: null,
+    desc: "Jugo natural recién hecho.",
+    image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=600&q=80"
+  }
+];
+
+const combosData = [
+  {
+    name: "Combo Familiar (Placeholder)",
+    price: 15.00,
+    size: "Para 3-4 personas",
+    tag: "AHORRA",
+    desc: "2 Pizzas grandes a elección + 1 Refresco de 1.5L.",
+    image: "https://images.unsplash.com/photo-1544982503-9f984c14501a?w=600&q=80"
+  }
+];
+
+// --- Render Helper Engine ---
+function renderMenu(items, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = items.map(item => `
+    <article class="card">
+      <div class="card-img-wrapper">
+        ${item.tag ? `<span class="tag">${item.tag}</span>` : ''}
+        <img src="${item.image}" alt="${item.name}">
+      </div>
+      <div class="card-body">
+        <div class="card-header-row">
+          <h3>${item.name}</h3>
+          <span class="price">$${item.price.toFixed(2)}</span>
+        </div>
+        <p class="desc">${item.desc}</p>
+        <div class="card-footer-row">
+          <span class="size">${item.size}</span>
+          <button class="btn-pedir" onclick="orderItem('${item.name}', ${item.price})">
+            + Pedir
+          </button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
+// --- WhatsApp Action ---
+function orderItem(name, price) {
+  const number = "584120000000"; 
+  const message = encodeURIComponent(`¡Hola! Quisiera pedir: ${name} ($${price.toFixed(2)}).`);
+  window.open(`https://wa.me/${number}?text=${message}`);
+}
+
+// --- Navigation Controller ---
+function switchView(viewId, navElement) {
+  document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+  
+  document.getElementById('view-' + viewId).classList.add('active');
+  if (navElement) {
+    navElement.classList.add('active');
+  } else {
+    const matchingNav = document.querySelector(`.nav-item[data-target="${viewId}"]`);
+    if (matchingNav) matchingNav.classList.add('active');
+  }
+}
+
+function triggerNav(viewId) {
+  switchView(viewId, null);
+}
+
+// Execute initial rendering
+renderMenu(pizzasData, 'pizzas-container');
+renderMenu(bebidasData, 'bebidas-container');
+renderMenu(combosData, 'combos-container');
+</script>
+</body>
+</html>
